@@ -12,6 +12,10 @@ process azimuth {
     path "*.h5*"
 
     """#!/usr/bin/env Rscript
+library(Azimuth)
+library(Seurat)
+library(SeuratData)
+library(SeuratDisk)
 
 # Run Azimuth
 print("Analyzing input file ${INPUT}")
