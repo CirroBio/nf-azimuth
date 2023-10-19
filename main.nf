@@ -3,56 +3,10 @@
 // Using DSL-2
 nextflow.enable.dsl=2
 
-process azimuth {
-    publishDir params.output, mode: 'copy', overwrite: true
-    container "${params.container__azimuth}"
-    input:
-    path INPUT
-
-    output:
-    path "*.h5ad", emit: h5ad
-    path "*.h5seurat", emit: h5seurat
-
-    """#!/usr/bin/env Rscript
-library(Azimuth)
-library(Seurat)
-library(SeuratData)
-library(SeuratDisk)
-
-az_ref = "${params.reference}"
-input = "${INPUT}"
-
-# Run Azimuth
-print(paste("Analyzing input file", input))
-print(paste("Using reference Azimuth dataset", az_ref))
-res <- RunAzimuth(
-    input,
-    reference = az_ref
-)
-
-output_filename <- paste(file_path_sans_ext(input), az_ref, "h5seurat", sep=".")
-print(paste("Saving to", output_filename))
-SaveH5Seurat(res, filename = output_filename)
-print("Converting to h5ad")
-Convert(output_filename, dest = "h5ad")
-"""
-}
-
-process vitessce {
-    container "${params.container__vitessce}"
-    publishDir "${params.web_output}", mode: 'copy', overwrite: true
-
-    input:
-        path INPUT
-        path AZIMUTH
-
-    output:
-        path "*"
-
-    script:
-    template "vitessce.py"
-
-}
+include { h5seurat_to_h5ad as input_to_h5ad } from "./h5seurat_to_h5ad" addParams(publish: false)
+include { h5seurat_to_h5ad as output_to_h5ad } from "./h5seurat_to_h5ad" addParams(publish: true)
+include { azimuth } from "./azimuth"
+include { vitessce } from "./vitessce"
 
 workflow {
     if(!params.input){error "Must provide --input"}
@@ -60,11 +14,21 @@ workflow {
 
     input = file(params.input, checkIfExists: true)
     azimuth(input)
+    output_to_h5ad(azimuth.out)
 
     if (params.web_output){
-        vitessce(
-            input,
-            azimuth.out.h5ad
-        )
+
+        if (params.input =~ /h5seurat/){
+            input_to_h5ad(input)
+            vitessce(
+                input_to_h5ad.out,
+                output_to_h5ad.out
+            )
+        } else {
+            vitessce(
+                input,
+                output_to_h5ad.out
+            )
+        }
     }
 }
