@@ -19,18 +19,22 @@ library(Seurat)
 library(SeuratData)
 library(SeuratDisk)
 
+az_ref = "${params.reference}"
+input = "${INPUT}"
+
 # Run Azimuth
-print("Analyzing input file ${INPUT}")
-print("Using reference Azimuth dataset ${params.reference}")
+print(paste("Analyzing input file", input))
+print(paste("Using reference Azimuth dataset", az_ref))
 res <- RunAzimuth(
-    "${INPUT}",
-    reference = "${params.reference}"
+    input,
+    reference = az_ref
 )
 
-print("Saving to ${params.reference}.h5seurat")
-SaveH5Seurat(res, filename = "${params.reference}.h5seurat")
+output_filename <- paste(file_path_sans_ext(input), az_ref, "h5seurat", sep=".")
+print(paste("Saving to", output_filename))
+SaveH5Seurat(res, filename = output_filename)
 print("Converting to h5ad")
-Convert("${params.reference}.h5seurat", dest = "h5ad")
+Convert(output_filename, dest = "h5ad")
 """
 }
 
