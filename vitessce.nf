@@ -7,7 +7,7 @@ process vitessce {
         path AZIMUTH
 
     output:
-        path "*", optional: true
+        path "*", optional: true, hidden: true
 
     script:
     template "vitessce.py"
