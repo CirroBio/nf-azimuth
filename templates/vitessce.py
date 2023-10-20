@@ -20,6 +20,7 @@ sc.logging.print_header()
 
 logger = logging.getLogger()
 
+
 def vitessce():
 
     # Read the raw read counts
