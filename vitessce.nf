@@ -7,7 +7,8 @@ process vitessce {
         path AZIMUTH
 
     output:
-        path "vitessce.config.*.json", optional: true, hidden: true
+        path "vitessce.config.*.json", optional: true
+        path "chart.manifest.json", optional: true
         path "azimuth.zarr/**", optional: true, hidden: true
 
     script:

@@ -127,9 +127,24 @@ def vitessce():
         for file in dataset["files"]:
             file["url"] = zarr_filepath
     logger.info("Saving vitessce config")
-    with open("vitessce.config.0.json", "w") as handle:
+    write_json(vc_dict, "vitessce.config.0.json")
+
+    # Format the chart manifest
+    manifest = [
+        {
+            "name": "Azimuth Projection",
+            "desc": "Projection into the Azimuth-${params.reference} reference space",
+            "type": "vitessce",
+            "config": "vitessce.config.0.json"
+        }
+    ]
+    write_json(manifest, "chart.manifest.json")
+
+
+def write_json(dat, fp):
+    with open(fp, "w") as handle:
         json.dump(
-            vc_dict,
+            dat,
             handle,
             indent=4
         )

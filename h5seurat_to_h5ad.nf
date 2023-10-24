@@ -14,7 +14,8 @@ library(SeuratDisk)
 
 input = "${INPUT}"
 print(paste("Input:", input))
-print("Converting to h5ad")
-Convert(input, dest = "h5ad")
+dest = gsub("h5seurat", "h5ad", input)
+print(paste("Converting to h5ad:", dest))
+Convert(input, dest=dest)
 """
 }
