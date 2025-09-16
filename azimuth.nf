@@ -9,6 +9,7 @@ process azimuth {
     path "*.h5seurat"
 
     script:
+    def reference_arg = REFERENCE instanceof Path ? REFERENCE.getFileName() : REFERENCE
     """#!/usr/bin/env Rscript
 library(Azimuth)
 library(Seurat)
@@ -16,7 +17,7 @@ library(SeuratData)
 library(SeuratDisk)
 library(tools)
 
-az_ref = "${REFERENCE}"
+az_ref = "${reference_arg}"
 input = "${INPUT}"
 
 # Run Azimuth
