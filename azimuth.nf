@@ -3,10 +3,12 @@ process azimuth {
     container "${params.container__azimuth}"
     input:
     path INPUT
+    val REFERENCE
 
     output:
     path "*.h5seurat"
 
+    script:
     """#!/usr/bin/env Rscript
 library(Azimuth)
 library(Seurat)
@@ -14,7 +16,7 @@ library(SeuratData)
 library(SeuratDisk)
 library(tools)
 
-az_ref = "${params.reference}"
+az_ref = "${REFERENCE}"
 input = "${INPUT}"
 
 # Run Azimuth

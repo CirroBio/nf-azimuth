@@ -13,7 +13,15 @@ workflow {
     if(!params.output){error "Must provide --output"}
 
     input = file(params.input, checkIfExists: true)
-    azimuth(input)
+
+    // Handle reference parameter - can be either a name or file path
+    if (file(params.reference).exists()) {
+        reference_file = file(params.reference, checkIfExists: true)
+        azimuth(input, reference_file)
+    } else {
+        azimuth(input, params.reference)
+    }
+
     output_to_h5ad(azimuth.out)
 
     if (params.web_output){

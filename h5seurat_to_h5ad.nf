@@ -7,6 +7,7 @@ process h5seurat_to_h5ad {
     output:
     path "*.h5ad"
 
+    script:
     """#!/usr/bin/env Rscript
 library(Seurat)
 library(SeuratData)
