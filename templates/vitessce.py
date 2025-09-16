@@ -138,7 +138,7 @@ def vitessce():
             "config": "vitessce.config.0.json"
         }
     ]
-    write_json(manifest, "chart.manifest.json")
+    write_json(manifest, "chart.manifest.pipeline.json")
 
 
 def write_json(dat, fp):
