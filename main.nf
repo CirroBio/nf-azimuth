@@ -11,16 +11,11 @@ include { vitessce } from "./vitessce"
 workflow {
     if(!params.input){error "Must provide --input"}
     if(!params.output){error "Must provide --output"}
+    if(!params.reference){error "Must provide --reference"}
 
     input = file(params.input, checkIfExists: true)
-
-    // Handle reference parameter - can be either a name or file path
-    if (file(params.reference).exists()) {
-        reference_file = file(params.reference, checkIfExists: true)
-        azimuth(input, reference_file)
-    } else {
-        azimuth(input, params.reference)
-    }
+    reference_file = file(params.reference, checkIfExists: true)
+    azimuth(input, reference_file)
 
     output_to_h5ad(azimuth.out)
 
