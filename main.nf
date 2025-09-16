@@ -11,9 +11,12 @@ include { vitessce } from "./vitessce"
 workflow {
     if(!params.input){error "Must provide --input"}
     if(!params.output){error "Must provide --output"}
+    if(!params.reference){error "Must provide --reference"}
 
     input = file(params.input, checkIfExists: true)
-    azimuth(input)
+    reference_path = Channel.fromPath(params.reference, checkIfExists: true)
+    azimuth(input, reference_path)
+
     output_to_h5ad(azimuth.out)
 
     if (params.web_output){
