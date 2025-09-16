@@ -14,8 +14,8 @@ workflow {
     if(!params.reference){error "Must provide --reference"}
 
     input = file(params.input, checkIfExists: true)
-    reference_file = file(params.reference, checkIfExists: true)
-    azimuth(input, reference_file)
+    reference_path = Channel.fromPath(params.reference, checkIfExists: true)
+    azimuth(input, reference_path)
 
     output_to_h5ad(azimuth.out)
 
